@@ -1,9 +1,9 @@
 import Vue from "vue";
 import App from "./App.vue";
 import "./registerServiceWorker";
+import Cookies from "js-cookie";
 import router from "./router";
 import store from "./store";
-import Cookies from "js-cookie";
 import "normalize.css/normalize.css"; // a modern alternative to CSS resets
 import Element from "element-ui";
 import "@/assets/styles/element-variables.scss";

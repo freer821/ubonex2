@@ -1,5 +1,5 @@
 <template>
-  <div v-if="errorLogs.length > 0">
+  <div v-if="errorLogs && errorLogs.length > 0">
     <el-badge
       :is-dot="true"
       style="line-height: 25px;margin-top: -5px;"

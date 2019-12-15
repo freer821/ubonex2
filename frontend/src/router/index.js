@@ -8,7 +8,7 @@ import { getToken } from "@/utils/cookies"; // get token from cookie
 import { getPageTitle } from "@/utils"; // getPageTitle
 
 /* Layout */
-//import Layout from "@/views/layout";
+import Layout from "@/views/layout";
 
 NProgress.configure({ showSpinner: false }); // NProgress Configuration
 
@@ -19,14 +19,11 @@ const whiteList = ["/login", "/auth-redirect"]; // no redirect whitelist
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
-const constantRoutes = [
+export const constantRoutes = [
   {
     path: "/login",
     component: () => import("@/views/login/index"),
-    hidden: true,
-    meta: {
-      title: "Login"
-    }
+    hidden: true
   },
   {
     path: "/404",
@@ -37,6 +34,26 @@ const constantRoutes = [
     path: "/401",
     component: () => import("@/views/error-page/401"),
     hidden: true
+  },
+  {
+    path: "/warehouse",
+    component: Layout,
+    redirect: "/warehouse/parcelscan",
+    name: "Warehouse",
+    children: [
+      {
+        path: "parcelscan",
+        component: () => import("@/views/warehouse/ParcelScan"),
+        name: "parcelscan",
+        meta: { title: "Parcel Scan", icon: "edit", affix: true}
+      },
+      {
+        path: "mainplatemgm",
+        component: () => import("@/views/warehouse/MainPlateManagement"),
+        name: "mainplatemgm",
+        meta: { title: "Main Plate Management", icon: "edit", affix: true }
+      }
+    ]
   }
 ];
 
@@ -44,7 +61,7 @@ const createRouter = () =>
   new VueRouter({
     // mode: 'history', // require service support
     scrollBehavior: () => ({ y: 0 }),
-    routes:constantRoutes
+    routes: constantRoutes
   });
 
 const router = createRouter();
