@@ -55,8 +55,7 @@ export default {
       return this.$store.getters.visitedViews;
     },
     routes() {
-      console.log('permission_routes: '+this.$store.state.permission_routes);
-      return this.$store.state.permission_routes;
+      return this.$store.getters.permission_routes;
     }
   },
   watch: {
@@ -84,10 +83,8 @@ export default {
       return tag.meta && tag.meta.affix;
     },
     filterAffixTags(routes, basePath = "/") {
-      console.log("routes:" + routes);
       let tags = [];
       routes.forEach(route => {
-        console.log("route:" + route);
         if (route.meta && route.meta.affix) {
           const tagPath = path.resolve(basePath, route.path);
           tags.push({

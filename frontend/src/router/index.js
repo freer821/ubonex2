@@ -40,18 +40,19 @@ export const constantRoutes = [
     component: Layout,
     redirect: "/warehouse/parcelscan",
     name: "Warehouse",
+    meta: { title: "Warehouse", icon: "edit"},
     children: [
       {
         path: "parcelscan",
         component: () => import("@/views/warehouse/ParcelScan"),
         name: "parcelscan",
-        meta: { title: "Parcel Scan", icon: "edit", affix: true}
+        meta: { title: "Parcel Scan", icon: "edit"}
       },
       {
         path: "mainplatemgm",
         component: () => import("@/views/warehouse/MainPlateManagement"),
         name: "mainplatemgm",
-        meta: { title: "Main Plate Management", icon: "edit", affix: true }
+        meta: { title: "Main Plate Management", icon: "edit" }
       }
     ]
   }
@@ -72,6 +73,7 @@ export function resetRouter() {
 }
 
 // permission check
+
 
 router.beforeEach(async (to, from, next) => {
   document.title = getPageTitle(to.meta.title);
