@@ -5,6 +5,7 @@ Vue.use(VueRouter);
 import NProgress from "nprogress"; // progress bar
 import "nprogress/nprogress.css"; // progress bar style
 import { getToken } from "@/utils/cookies"; // get token from cookie
+import { getPageTitle } from "@/utils"; // getPageTitle
 
 /* Layout */
 //import Layout from "@/views/layout";
@@ -22,7 +23,10 @@ const constantRoutes = [
   {
     path: "/login",
     component: () => import("@/views/login/index"),
-    hidden: true
+    hidden: true,
+    meta: {
+      title: "Login"
+    }
   },
   {
     path: "/404",
@@ -53,6 +57,7 @@ export function resetRouter() {
 // permission check
 
 router.beforeEach(async (to, from, next) => {
+  document.title = getPageTitle(to.meta.title);
   // start progress bar
   NProgress.start();
 
@@ -67,7 +72,6 @@ router.beforeEach(async (to, from, next) => {
       next();
     }
   } else {
-
     if (whiteList.indexOf(to.path) !== -1) {
       // in the free login whitelist, go directly
       next();

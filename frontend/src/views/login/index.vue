@@ -68,30 +68,34 @@
 
       <div style="position:relative">
         <div class="tips">
-          <span>Username : admin</span>
-          <span>Password : any</span>
+          <span>Username : Email</span>
         </div>
         <div class="tips">
-          <span style="margin-right:18px;">Username : editor</span>
-          <span>Password : any</span>
+          <span>Password : at least 8 characters</span>
         </div>
 
-        <el-button
+        <el-link
           class="thirdparty-button"
           type="primary"
           @click="showDialog = true"
         >
-          Or connect with
-        </el-button>
+          Username or Password forget?
+        </el-link>
       </div>
     </el-form>
 
-    <el-dialog title="Or connect with" :visible.sync="showDialog">
-      Can not be simulated on local, so please combine you own business
-      simulation! ! !
-      <br />
-      <br />
-      <br />
+    <el-dialog title="Password reset" :visible.sync="showDialog" style="color: #2d3a4b">
+      <el-form :inline="true" :model="loginForm">
+        <el-form-item label="注册邮箱">
+          <el-input
+            v-model="loginForm.username"
+            placeholder="请输入注册邮箱"
+          ></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary">提交</el-button>
+        </el-form-item>
+      </el-form>
     </el-dialog>
   </div>
 </template>
