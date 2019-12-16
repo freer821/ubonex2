@@ -36,23 +36,23 @@ export const constantRoutes = [
     hidden: true
   },
   {
-    path: "/warehouse",
+    path: "/",
     component: Layout,
-    redirect: "/warehouse/parcelscan",
+    redirect: "/parcelscan",
     name: "Warehouse",
-    meta: { title: "Warehouse", icon: "edit"},
+    meta: { title: "Warehouse", icon: "guide"},
     children: [
       {
         path: "parcelscan",
         component: () => import("@/views/warehouse/ParcelScan"),
         name: "parcelscan",
-        meta: { title: "Parcel Scan", icon: "edit"}
+        meta: { title: "Parcel Scan", affix: true}
       },
       {
         path: "mainplatemgm",
         component: () => import("@/views/warehouse/MainPlateManagement"),
         name: "mainplatemgm",
-        meta: { title: "Main Plate Management", icon: "edit" }
+        meta: { title: "Main Plate Management", affix: true}
       }
     ]
   }
