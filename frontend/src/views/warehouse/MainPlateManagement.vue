@@ -54,8 +54,6 @@
       <el-table-column type="selection" width="55"> </el-table-column>
       <el-table-column label="主单号"> </el-table-column>
       <el-table-column label="内含包裹数"> </el-table-column>
-      <el-table-column label="线路类型"> </el-table-column>
-      <el-table-column label="状态"> </el-table-column>
       <el-table-column
         label="操作"
         align="center"

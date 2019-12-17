@@ -5,20 +5,28 @@
         <el-form
           label-position="top"
           label-width="100px"
-          :model="formLabelAlign"
+          :model="package_info"
           class="form-container"
         >
           <el-form-item>
             <span slot="label" class="ps-label">包裹单号</span>
-            <input type="text" class="ps_input" />
+            <input
+              v-model="package_info.inland_code"
+              type="text"
+              class="ps_input"
+              @keyup.enter="$event.target.nextElementSibling.focus()"
+              autofocus
+            />
           </el-form-item>
           <el-form-item>
             <span slot="label" class="ps-label">包裹重量</span>
-            <input type="text" class="ps_input" />
-          </el-form-item>
-          <el-form-item>
-            <span slot="label" class="ps-label">系统分配分主单/批次号</span>
-            <input type="text" class="ps_input" disabled />
+            <input
+              v-model="package_info.real_weight"
+              ref="real_weight"
+              type="text"
+              class="ps_input"
+              @keyup.enter="package_request_submit"
+            />
           </el-form-item>
         </el-form>
         <div class="ps_packageinfo_box">
@@ -32,27 +40,27 @@
               包裹单号：
             </el-col>
             <el-col :span="6">
-              UB1321654ex
+              {{ package_response.inland_code }}
             </el-col>
             <el-col :span="6">
               收件人：
             </el-col>
             <el-col :span="6">
-              隔壁老王
+              {{ package_response.receiver_name }}
             </el-col>
           </el-row>
           <el-row :gutter="20">
             <el-col :span="6">
-              批次/主单号：
+              发件人：
             </el-col>
             <el-col :span="6">
-              UB1321654ex
+              {{ package_response.sender_name }}
             </el-col>
             <el-col :span="6">
               收件城市：
             </el-col>
             <el-col :span="6">
-              隔壁老王
+              {{ package_response.receiver_city }}
             </el-col>
           </el-row>
           <el-row :gutter="20">
@@ -60,13 +68,13 @@
               登记重量(KG)：
             </el-col>
             <el-col :span="6">
-              UB1321654ex
+              {{ package_response.package_weight }}
             </el-col>
             <el-col :span="6">
               收件人身份证：
             </el-col>
             <el-col :span="6">
-              隔壁老王
+              {{ package_response.receiver_identity }}
             </el-col>
           </el-row>
           <el-row :gutter="20">
@@ -74,44 +82,74 @@
               实际重量(KG)：
             </el-col>
             <el-col :span="6">
-              UB1321654ex
+              {{ package_response.package_real_weight }}
             </el-col>
             <el-col :span="6">
-              当前状态：
+              物流线路：
             </el-col>
             <el-col :span="6">
-              隔壁老王
+              {{ package_response.logistic_category }}
             </el-col>
           </el-row>
         </div>
       </el-col>
       <el-col :span="6">
-        <el-table style="width: 100%">
+        <el-table :data="pici_data" height="550" style="width: 100%">
           <el-table-column prop="pici_code" label="批次号"> </el-table-column>
           <el-table-column prop="parcel_num" label="包裹数"> </el-table-column>
         </el-table>
       </el-col>
       <el-col :span="8">
-        <div class="ps_big_pici"><span class="color-change">CC001</span></div>
+        <div style="font-size: 20px;font-weight: 800;">
+          系统获取批次号:
+        </div>
+        <div class="ps_big_pici">
+          <span class="color-change">{{ package_response.pici_code }}</span>
+        </div>
       </el-col>
     </el-row>
     <el-row :gutter="20">
       <el-col :span="10">
-        <div class="ps_status"><span>复重成功</span></div>
+        <div class="ps_status" v-if="package_response.status_no">
+          <span>{{ package_response.status_no }}</span>
+        </div>
+        <div class="ps_status" v-else><span>等待扫描</span></div>
       </el-col>
-      <el-col :span="6">
+      <el-col :span="7">
         <div class="ps_status2">
-          <span style="display:inline-block;height:100%;vertical-align:middle"
-            >已扫描包裹数：</span
-          >
+          <el-popover placement="top" width="160" v-model="pop_visible">
+            <p>确定清除扫描成功数据？</p>
+            <div style="text-align: right; margin: 0">
+              <el-button size="mini" type="text" @click="pop_visible = false"
+                >取消</el-button
+              >
+              <el-button type="primary" size="mini" @click="resetscanresult('success')"
+                >确定</el-button
+              >
+            </div>
+            <span
+              style="display:inline-block;height:100%;vertical-align:middle"
+              slot="reference">
+              扫描成功：{{ scan_result_successed }}
+            </span>
+          </el-popover>
         </div>
       </el-col>
-      <el-col :span="8">
+      <el-col :span="7">
         <div class="ps_status2">
-          <span
-            style="display:inline-block;height:100%;vertical-align:middle; font-size: 86px"
-            >123</span
-          >
+          <el-popover placement="top" width="160" v-model="pop_failed_visible">
+            <p>确定清除扫描失败数据？</p>
+            <div style="text-align: right; margin: 0">
+              <el-button size="mini" type="text" @click="pop_failed_visible = false"
+              >取消</el-button
+              >
+              <el-button type="primary" size="mini" @click="resetscanresult('failed')"
+              >确定</el-button
+              >
+            </div>
+            <span style="display:inline-block;height:100%;vertical-align:middle;" slot="reference">扫描失败：{{ scan_result_failed }}</span>
+          </el-popover>
+
         </div>
       </el-col>
     </el-row>
@@ -119,26 +157,70 @@
 </template>
 
 <script>
+import { package_scan, get_pici_info } from "@/api/warehouse";
+import {
+  getScanSuccessed,
+  getScanFailed,
+  setScanSuccessed,
+  setScanFailed
+} from "@/utils/cookies";
+
 export default {
   name: "ParcelScan",
   data() {
     return {
-      formLabelAlign: {
-        name: "",
-        region: "",
-        type: ""
+      package_info: {
+        inland_code: "",
+        real_weight: ""
       },
-      form: {
-        name: "",
-        region: "",
-        date1: "",
-        date2: "",
-        delivery: false,
-        type: [],
-        resource: "",
-        desc: ""
-      }
+      package_response: {},
+      pici_data: [],
+      scan_result_successed: getScanSuccessed(),
+      scan_result_failed: getScanFailed(),
+      pop_visible: false,
+      pop_failed_visible:false
     };
+  },
+  created() {
+    get_pici_info(this.$store.getters.login_info)
+      .then(response => {
+        this.pici_data = response.msg;
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  },
+  computed: {
+    package_request: function() {
+      return Object.assign(this.package_info, this.$store.getters.login_info);
+    }
+  },
+  methods: {
+    package_request_submit() {
+      package_scan(this.package_request)
+        .then(response => {
+          this.package_response = response.msg;
+          this.scan_result_successed = parseInt(this.scan_result_successed) + 1;
+          setScanSuccessed(this.scan_result_successed);
+        })
+        .catch(err => {
+          console.log(err);
+          this.scan_result_failed = parseInt(this.scan_result_failed) + 1;
+          setScanFailed(this.scan_result_failed);
+        });
+    },
+
+    resetscanresult(type) {
+      if (type==='success') {
+        this.scan_result_successed = 0;
+        setScanSuccessed(this.scan_result_successed);
+      } else {
+        this.scan_result_failed = 0;
+        setScanFailed(this.scan_result_failed);
+      }
+      this.pop_visible = false;
+      this.pop_failed_visible=false;
+    }
   }
 };
 </script>
@@ -208,6 +290,7 @@ export default {
   text-align: center;
   font-weight: 600;
   background-color: rgb(0, 153, 119);
+  min-width: 100%;
 }
 
 .ps_status2 {

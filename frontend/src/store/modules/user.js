@@ -1,10 +1,19 @@
-import { getInfo, login, logout } from "@/api/user";
-import { getToken, removeToken, setToken } from "@/utils/cookies";
+import { getInfo, login } from "@/api/user";
+import {
+  getToken,
+  removeToken,
+  setToken,
+  getUsername,
+  setUsername,
+  removeUsername,
+  setScanSuccessed,
+  setScanFailed
+} from "@/utils/cookies";
 import router, { resetRouter } from "@/router";
 
 const state = {
   token: getToken(),
-  name: "",
+  name: getUsername(),
   avatar: "",
   introduction: "",
   roles: []
@@ -38,6 +47,9 @@ const actions = {
           commit("SET_TOKEN", response.msg);
           commit("SET_NAME", username.trim());
           setToken(response.msg);
+          setUsername(username.trim());
+          setScanSuccessed(0);
+          setScanFailed(0);
           resolve();
         })
         .catch(error => {
@@ -65,7 +77,7 @@ const actions = {
           }
 
           commit("SET_ROLES", roles);
-          commit("SET_NAME", name);
+          //commit("SET_NAME", name);
           commit("SET_AVATAR", avatar);
           commit("SET_INTRODUCTION", introduction);
           resolve(data);
@@ -84,6 +96,7 @@ const actions = {
         commit("SET_TOKEN", "");
         commit("SET_ROLES", []);
         removeToken();
+        removeUsername();
         resetRouter();
 
         // reset visited views and cached views
