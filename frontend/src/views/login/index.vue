@@ -101,13 +101,13 @@
 </template>
 
 <script>
-import { validUsername } from "@/utils/validate";
+import { validEmail } from "@/utils/validate";
 
 export default {
   name: "Login",
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
+      if (!validEmail(value)) {
         callback(new Error("Please enter the correct user name"));
       } else {
         callback();
@@ -122,8 +122,8 @@ export default {
     };
     return {
       loginForm: {
-        username: "admin",
-        password: "111111"
+        username: "admin@admin.de",
+        password: "Ubonex888_"
       },
       loginRules: {
         username: [
