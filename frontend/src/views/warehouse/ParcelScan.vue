@@ -12,6 +12,7 @@
             <span slot="label" class="ps-label">包裹单号</span>
             <input
               v-model="package_info.inland_code"
+              ref="inland_code"
               type="text"
               class="ps_input"
               @keyup.enter="$event.target.nextElementSibling.focus()"
@@ -36,59 +37,35 @@
         </div>
         <div class="parcel_info">
           <el-row :gutter="20">
-            <el-col :span="6">
-              包裹单号：
+            <el-col :span="12">
+              包裹单号：{{ package_response.inland_code }}
             </el-col>
-            <el-col :span="6">
-              {{ package_response.inland_code }}
-            </el-col>
-            <el-col :span="6">
-              收件人：
-            </el-col>
-            <el-col :span="6">
-              {{ package_response.receiver_name }}
+            <el-col :span="12">
+              收件人： {{ package_response.receiver_name }}
             </el-col>
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="6">
-              发件人：
+            <el-col :span="12">
+              发件人：{{ package_response.sender_name }}
             </el-col>
-            <el-col :span="6">
-              {{ package_response.sender_name }}
-            </el-col>
-            <el-col :span="6">
-              收件城市：
-            </el-col>
-            <el-col :span="6">
-              {{ package_response.receiver_city }}
+            <el-col :span="12">
+              收件城市：{{ package_response.receiver_city }}
             </el-col>
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="6">
-              登记重量(KG)：
+            <el-col :span="12">
+              登记重量(KG)：{{ package_response.package_weight }}
             </el-col>
-            <el-col :span="6">
-              {{ package_response.package_weight }}
-            </el-col>
-            <el-col :span="6">
-              收件人身份证：
-            </el-col>
-            <el-col :span="6">
-              {{ package_response.receiver_identity }}
+            <el-col :span="12">
+              收件人身份证：{{ package_response.receiver_identity }}
             </el-col>
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="6">
-              实际重量(KG)：
+            <el-col :span="12">
+              实际重量(KG)： {{ package_response.package_real_weight }}
             </el-col>
-            <el-col :span="6">
-              {{ package_response.package_real_weight }}
-            </el-col>
-            <el-col :span="6">
-              物流线路：
-            </el-col>
-            <el-col :span="6">
-              {{ package_response.logistic_category }}
+            <el-col :span="12">
+              物流线路：{{ package_response.logistic_category }}
             </el-col>
           </el-row>
         </div>
@@ -104,14 +81,14 @@
           系统获取批次号:
         </div>
         <div class="ps_big_pici">
-          <span class="color-change">{{ package_response.pici_code }}</span>
+          <span ref="pici_code_result">{{ package_response.pici_code }}</span>
         </div>
       </el-col>
     </el-row>
     <el-row :gutter="20">
       <el-col :span="10">
-        <div class="ps_status" v-if="package_response.status_no">
-          <span>{{ package_response.status_no }}</span>
+        <div class="ps_status" v-if="package_response.status_no" ref="package_status_result">
+          <span>{{ package_response.status }}</span>
         </div>
         <div class="ps_status" v-else><span>等待扫描</span></div>
       </el-col>
@@ -123,13 +100,17 @@
               <el-button size="mini" type="text" @click="pop_visible = false"
                 >取消</el-button
               >
-              <el-button type="primary" size="mini" @click="resetscanresult('success')"
+              <el-button
+                type="primary"
+                size="mini"
+                @click="resetscanresult('success')"
                 >确定</el-button
               >
             </div>
             <span
               style="display:inline-block;height:100%;vertical-align:middle"
-              slot="reference">
+              slot="reference"
+            >
               扫描成功：{{ scan_result_successed }}
             </span>
           </el-popover>
@@ -140,16 +121,25 @@
           <el-popover placement="top" width="160" v-model="pop_failed_visible">
             <p>确定清除扫描失败数据？</p>
             <div style="text-align: right; margin: 0">
-              <el-button size="mini" type="text" @click="pop_failed_visible = false"
-              >取消</el-button
+              <el-button
+                size="mini"
+                type="text"
+                @click="pop_failed_visible = false"
+                >取消</el-button
               >
-              <el-button type="primary" size="mini" @click="resetscanresult('failed')"
-              >确定</el-button
+              <el-button
+                type="primary"
+                size="mini"
+                @click="resetscanresult('failed')"
+                >确定</el-button
               >
             </div>
-            <span style="display:inline-block;height:100%;vertical-align:middle;" slot="reference">扫描失败：{{ scan_result_failed }}</span>
+            <span
+              style="display:inline-block;height:100%;vertical-align:middle;"
+              slot="reference"
+              >扫描失败：{{ scan_result_failed }}</span
+            >
           </el-popover>
-
         </div>
       </el-col>
     </el-row>
@@ -178,7 +168,7 @@ export default {
       scan_result_successed: getScanSuccessed(),
       scan_result_failed: getScanFailed(),
       pop_visible: false,
-      pop_failed_visible:false
+      pop_failed_visible: false
     };
   },
   created() {
@@ -197,21 +187,36 @@ export default {
   },
   methods: {
     package_request_submit() {
+      this.package_response = {};
       package_scan(this.package_request)
         .then(response => {
           this.package_response = response.msg;
-          this.scan_result_successed = parseInt(this.scan_result_successed) + 1;
-          setScanSuccessed(this.scan_result_successed);
+          if (this.package_response.status_no === '41') {
+            this.package_response.status = '复重成功！';
+            this.scan_result_successed = parseInt(this.scan_result_successed) + 1;
+            setScanSuccessed(this.scan_result_successed);
+          } else {
+            this.package_response.status = '复重失败！';
+            this.scan_result_failed = parseInt(this.scan_result_failed) + 1;
+            setScanFailed(this.scan_result_failed);
+          }
         })
         .catch(err => {
           console.log(err);
           this.scan_result_failed = parseInt(this.scan_result_failed) + 1;
           setScanFailed(this.scan_result_failed);
+        })
+        .finally(() => {
+          console.log("call finally")
+          this.package_info.inland_code = "";
+          this.package_info.real_weight = "";
+          this.$refs.inland_code.focus();
+          this.changeBackgroundColor();
         });
     },
 
     resetscanresult(type) {
-      if (type==='success') {
+      if (type === "success") {
         this.scan_result_successed = 0;
         setScanSuccessed(this.scan_result_successed);
       } else {
@@ -219,7 +224,21 @@ export default {
         setScanFailed(this.scan_result_failed);
       }
       this.pop_visible = false;
-      this.pop_failed_visible=false;
+      this.pop_failed_visible = false;
+    },
+
+    changeBackgroundColor() {
+      if (this.package_response && this.package_response.status_no === '41') {
+        this.$refs.pici_code_result.style.color = 'green'
+        this.$refs.package_status_result.style.background = 'green'
+      } else {
+        this.$refs.pici_code_result.style.color = 'red'
+        this.$refs.package_status_result.style.background = 'red'
+      }
+      setTimeout(()=>{
+        this.$refs.pici_code_result.style.color = 'black'
+        this.$refs.package_status_result.style.background = '#009977'
+      },1000)
     }
   }
 };
