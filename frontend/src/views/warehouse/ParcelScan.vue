@@ -170,7 +170,7 @@ export default {
     };
   },
   created() {
-    get_pici_info(this.$store.getters.login_info)
+    get_pici_info()
       .then(response => {
         this.pici_data = response.msg;
       })
@@ -178,15 +178,10 @@ export default {
         console.log(err);
       });
   },
-  computed: {
-    package_request: function() {
-      return Object.assign(this.package_info, this.$store.getters.login_info);
-    }
-  },
   methods: {
     package_request_submit() {
       this.package_response = {};
-      package_scan(this.package_request)
+      package_scan(this.package_info)
         .then(response => {
           this.package_response = response.msg;
           if (this.package_response.status_no === '41') {

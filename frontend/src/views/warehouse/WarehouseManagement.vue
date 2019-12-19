@@ -18,21 +18,17 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="{ row }">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button type="primary" size="mini" @click="handlePiciEdit(row)">
             编辑
           </el-button>
           <el-button
             size="small"
             type="warning"
-            @click="handleModifyStatus(row, 'draft')"
+            @click="handleExchangePiciAndMainPlate(row)"
           >
             转换主单号
           </el-button>
-          <el-button
-            size="mini"
-            type="danger"
-            @click="handleModifyStatus(row, 'deleted')"
-          >
+          <el-button size="mini" type="danger" @click="handlePiciDel(row)">
             删除
           </el-button>
         </template>
@@ -135,9 +131,7 @@ export default {
   },
   methods: {
     fetchPiciParcels() {
-      let request_data = {...this.$store.getters.login_info};
-      request_data.action='get_pici_info';
-      get_pici_info(request_data)
+      get_pici_info()
         .then(response => {
           this.pici_data = response.msg;
         })
@@ -146,15 +140,73 @@ export default {
         });
     },
     fetchMainPlateParcels() {
-      let request_data = {...this.$store.getters.login_info};
-      request_data.action='get_main_plate_info';
-
-      get_main_plate_info(request_data)
+      get_main_plate_info()
         .then(response => {
           this.main_plate_data = response.msg;
         })
         .catch(err => {
           console.log(err);
+        });
+    },
+    handlePiciEdit(row) {
+      this.$prompt(
+        "当前批次号为 " + row.pici_code + ", 请输入新的批次号",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          inputPattern: /^[1-9][0-9]*$/,
+          inputErrorMessage: "批次号格式不正确, 至接受数字"
+        }
+      )
+        .then(({ value }) => {
+          this.$message({
+            type: "success",
+            message: "更新成功！新的批次号: " + value
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "取消输入"
+          });
+        });
+    },
+    handleExchangePiciAndMainPlate(row) {
+      this.$prompt("当前批次号为 " + row.pici_code + ", 请输入主单号", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消"
+      })
+        .then(({ value }) => {
+          this.$message({
+            type: "success",
+            message: "更新成功！主单号: " + value
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "取消输入"
+          });
+        });
+    },
+    handlePiciDel(row) {
+      this.$confirm("此操作将删除批次号: "+row.pici_code+", 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.$message({
+            type: "success",
+            message: "删除成功!"
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
         });
     }
   }
