@@ -50,9 +50,9 @@ export const constantRoutes = [
       },
       {
         path: "mainplatemgm",
-        component: () => import("@/views/warehouse/MainPlateManagement"),
+        component: () => import("@/views/warehouse/WarehouseManagement"),
         name: "mainplatemgm",
-        meta: { title: "Main Plate Management", affix: true}
+        meta: { title: "MainPlate/PICI Management", affix: true}
       }
     ]
   }

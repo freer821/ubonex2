@@ -8,9 +8,17 @@ export function package_scan(data) {
   });
 }
 
-
 export function get_pici_info(data) {
-  data.action = "get_pici_info";
+  return request({
+    url: "/packhouse_action",
+    method: "post",
+    data
+  });
+}
+
+export function get_main_plate_info(data) {
+  let request_data = Object.assign({}, data);
+  request_data.action = "get_main_plate_info";
   return request({
     url: "/packhouse_action",
     method: "post",

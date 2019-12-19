@@ -98,14 +98,12 @@
             <p>确定清除扫描成功数据？</p>
             <div style="text-align: right; margin: 0">
               <el-button size="mini" type="text" @click="pop_visible = false"
-                >取消</el-button
-              >
+                >取消</el-button>
               <el-button
                 type="primary"
                 size="mini"
                 @click="resetscanresult('success')"
-                >确定</el-button
-              >
+                >确定</el-button>
             </div>
             <span
               style="display:inline-block;height:100%;vertical-align:middle"
