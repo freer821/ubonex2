@@ -38,3 +38,40 @@ export function change_pici_code(new_pici_code, old_pici_code) {
     data
   });
 }
+
+export function exchange_pici_code_to_main_plate_code(main_plate_code, pici_code) {
+  const data = Object.assign({action: 'exchange_pici_code_to_main_plate_code', pici_code: pici_code, main_plate_code: main_plate_code}, login_info);
+  return request({
+    url: "/packhouse_action",
+    method: "post",
+    data
+  });
+}
+
+
+export function del_pici_code(pici_code) {
+  const data = Object.assign({action: 'del_pici_code', pici_code: pici_code}, login_info);
+  return request({
+    url: "/packhouse_action",
+    method: "post",
+    data
+  });
+}
+export function update_main_plate_code(new_main_plate_code, old_main_plate_code) {
+  const data = Object.assign({action: 'update_main_plate_code', new_main_plate_code: new_main_plate_code, old_main_plate_code:old_main_plate_code}, login_info);
+  return request({
+    url: "/packhouse_action",
+    method: "post",
+    data
+  });
+}
+
+
+export function del_main_plate_code(main_plate_code) {
+  const data = Object.assign({action: 'del_main_plate_code', main_plate_code: main_plate_code}, login_info);
+  return request({
+    url: "/packhouse_action",
+    method: "post",
+    data
+  });
+}

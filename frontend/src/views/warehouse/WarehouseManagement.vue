@@ -83,7 +83,7 @@
       style="width: 100%;"
       height="250"
     >
-      <el-table-column type="selection" width="55"></el-table-column>
+      <!--el-table-column type="selection" width="55"></el-table-column-->
       <el-table-column prop="main_plate_code" label="主单号"></el-table-column>
       <el-table-column prop="parcel_num" label="内含包裹数"></el-table-column>
       <el-table-column
@@ -93,15 +93,14 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="{ row }">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button
+            type="primary"
+            size="mini"
+            @click="handleMainPlateUpdate(row)"
+          >
             编辑
           </el-button>
-          <el-button
-            v-if="row.status != 'deleted'"
-            size="mini"
-            type="danger"
-            @click="handleModifyStatus(row, 'deleted')"
-          >
+          <el-button size="mini" type="danger" @click="handleMainPlateDel(row)">
             删除
           </el-button>
         </template>
@@ -111,7 +110,15 @@
 </template>
 
 <script>
-import { get_pici_info, get_main_plate_info } from "@/api/warehouse";
+import {
+  get_pici_info,
+  get_main_plate_info,
+  exchange_pici_code_to_main_plate_code,
+  del_pici_code,
+  change_pici_code,
+  del_main_plate_code,
+  update_main_plate_code
+} from "@/api/warehouse";
 
 import Pagination from "@/components/Pagination"; // secondary package based on el-pagination
 
@@ -160,12 +167,23 @@ export default {
         }
       )
         .then(({ value }) => {
-          this.$message({
-            type: "success",
-            message: "更新成功！新的批次号: " + value
-          });
+          if (value.localeCompare(row.pici_code) === 0) {
+            this.$message({
+              type: "info",
+              message: "批次号未改变！"
+            });
+          } else {
+            change_pici_code(value, row.pici_code).then(response => {
+              this.$message({
+                type: "success",
+                message: response.msg
+              });
+              this.fetchPiciParcels();
+            });
+          }
         })
-        .catch(() => {
+        .catch(err => {
+          console.log(err);
           this.$message({
             type: "info",
             message: "取消输入"
@@ -178,10 +196,16 @@ export default {
         cancelButtonText: "取消"
       })
         .then(({ value }) => {
-          this.$message({
-            type: "success",
-            message: "更新成功！主单号: " + value
-          });
+          exchange_pici_code_to_main_plate_code(value, row.pici_code).then(
+            response => {
+              this.$message({
+                type: "success",
+                message: response.msg
+              });
+              this.fetchPiciParcels();
+              this.fetchMainPlateParcels();
+            }
+          );
         })
         .catch(() => {
           this.$message({
@@ -191,20 +215,89 @@ export default {
         });
     },
     handlePiciDel(row) {
-      this.$confirm("此操作将删除批次号: "+row.pici_code+", 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
+      this.$confirm(
+        "此操作将删除批次号: " + row.pici_code + ", 是否继续?",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }
+      )
         .then(() => {
-          this.$message({
-            type: "success",
-            message: "删除成功!"
+          del_pici_code(row.pici_code).then(response => {
+            this.$message({
+              type: "success",
+              message: response.msg
+            });
+            this.fetchPiciParcels();
           });
         })
         .catch(() => {
           this.$message({
             type: "info",
+            message: "已取消删除"
+          });
+        });
+    },
+
+    handleMainPlateUpdate(row) {
+      this.$prompt(
+        "当前主单号为 " + row.main_plate_code + ", 请输入新的主单号",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消"
+        }
+      )
+        .then(({ value }) => {
+          if (value.localeCompare(row.main_plate_code) === 0) {
+            this.$message({
+              type: "info",
+              message: "主单号未改变！"
+            });
+          } else {
+            update_main_plate_code(value, row.main_plate_code).then(
+              response => {
+                this.$message({
+                  type: "success",
+                  message: response.msg
+                });
+                this.fetchMainPlateParcels();
+              }
+            );
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          this.$message({
+            type: "error",
+            message: "取消输入"
+          });
+        });
+    },
+    handleMainPlateDel(row) {
+      this.$confirm(
+        "此操作将删除主单号: " + row.main_plate_code + ", 是否继续?",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }
+      )
+        .then(() => {
+          del_main_plate_code(row.main_plate_code).then(response => {
+            this.$message({
+              type: "success",
+              message: response.msg
+            });
+            this.fetchMainPlateParcels();
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "error",
             message: "已取消删除"
           });
         });
