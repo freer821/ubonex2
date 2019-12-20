@@ -68,10 +68,7 @@
 
       <div style="position:relative">
         <div class="tips">
-          <span>Username : Email</span>
-        </div>
-        <div class="tips">
-          <span>Password : at least 8 characters</span>
+          <span>本版本为测试版，可任意操作，数据库与生产版同步！</span>
         </div>
 
         <el-link
@@ -122,8 +119,8 @@ export default {
     };
     return {
       loginForm: {
-        username: "admin@admin.de",
-        password: "Ubonex888_"
+        username: "",
+        password: ""
       },
       loginRules: {
         username: [
