@@ -5,6 +5,7 @@ const login_info = store.getters.login_info;
 
 export function package_scan(input) {
   const data = Object.assign(input, login_info);
+  data.action = 'parckage_scan';
   return request({
     url: "/packhouse_action",
     method: "post",
