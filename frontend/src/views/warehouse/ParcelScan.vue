@@ -15,7 +15,7 @@
               ref="inland_code"
               type="text"
               class="ps_input"
-              @keyup.enter="$event.target.nextElementSibling.focus()"
+              @keyup.enter="jumpToWeightInput"
               autofocus
             />
           </el-form-item>
@@ -163,6 +163,10 @@ export default {
     };
   },
   methods: {
+
+    jumpToWeightInput: function (event) {
+      this.$refs.real_weight.focus();
+    },
     package_request_submit() {
       this.package_response = {};
       package_scan(this.package_info)
