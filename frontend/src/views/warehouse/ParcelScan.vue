@@ -1,7 +1,7 @@
 <template>
   <div style="padding:10px">
     <el-row :gutter="20">
-      <el-col :span="10">
+      <el-col :span="14">
         <el-form
           label-position="top"
           label-width="100px"
@@ -70,13 +70,7 @@
           </el-row>
         </div>
       </el-col>
-      <el-col :span="6">
-        <el-table :data="pici_data" height="550" style="width: 100%">
-          <el-table-column prop="pici_code" label="批次号"> </el-table-column>
-          <el-table-column prop="parcel_num" label="包裹数"> </el-table-column>
-        </el-table>
-      </el-col>
-      <el-col :span="8">
+      <el-col :span="10">
         <div style="font-size: 20px;font-weight: 800;">
           系统获取批次号:
         </div>
@@ -145,7 +139,7 @@
 </template>
 
 <script>
-import { package_scan, get_pici_info } from "@/api/warehouse";
+import { package_scan } from "@/api/warehouse";
 import {
   getScanSuccessed,
   getScanFailed,
@@ -162,21 +156,11 @@ export default {
         real_weight: ""
       },
       package_response: {},
-      pici_data: [],
       scan_result_successed: getScanSuccessed(),
       scan_result_failed: getScanFailed(),
       pop_visible: false,
       pop_failed_visible: false
     };
-  },
-  created() {
-    get_pici_info()
-      .then(response => {
-        this.pici_data = response.msg;
-      })
-      .catch(err => {
-        console.log(err);
-      });
   },
   methods: {
     package_request_submit() {

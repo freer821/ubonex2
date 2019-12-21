@@ -40,19 +40,19 @@ export const constantRoutes = [
     component: Layout,
     redirect: "/parcelscan",
     name: "Warehouse",
-    meta: { title: "Warehouse", icon: "guide"},
+    meta: { title: "仓库操作", icon: "guide"},
     children: [
       {
         path: "parcelscan",
         component: () => import("@/views/warehouse/ParcelScan"),
         name: "parcelscan",
-        meta: { title: "Parcel Scan", affix: true}
+        meta: { title: "包裹扫描", affix: true}
       },
       {
         path: "mainplatemgm",
         component: () => import("@/views/warehouse/WarehouseManagement"),
         name: "mainplatemgm",
-        meta: { title: "MainPlate/PICI Management", affix: true}
+        meta: { title: "批次号/主单号管理", affix: true}
       }
     ]
   }
