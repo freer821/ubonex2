@@ -67,12 +67,6 @@
       >
 
       <div style="position:relative">
-        <div class="tips">
-          <span>本版本为测试版，可任意操作</span>
-        </div>
-        <div class="tips">
-          <span>注：数据库与生产版同步！</span>
-        </div>
 
         <el-link
           class="thirdparty-button"

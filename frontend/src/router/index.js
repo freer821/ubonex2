@@ -43,16 +43,22 @@ export const constantRoutes = [
     meta: { title: "仓库操作", icon: "guide"},
     children: [
       {
-        path: "parcelscan",
-        component: () => import("@/views/warehouse/ParcelScan"),
-        name: "parcelscan",
-        meta: { title: "包裹扫描", affix: true}
+        path: 'parcelscan',
+        component: () => import('@/views/warehouse/ParcelScan'),
+        name: 'parcelscan',
+        meta: { title: '包裹扫描', affix: true}
       },
       {
-        path: "mainplatemgm",
-        component: () => import("@/views/warehouse/WarehouseManagement"),
-        name: "mainplatemgm",
-        meta: { title: "批次号/主单号管理", affix: true}
+        path: 'picimgm',
+        component: () => import('@/views/warehouse/PiciCodeManagement'),
+        name: 'picimgm',
+        meta: { title: '批次号管理', affix: true }
+      },
+      {
+        path: 'mainplatemgm',
+        component: () => import('@/views/warehouse/MainPlateCodeManagement'),
+        name: 'mainplatemgm',
+        meta: { title: '主单号管理' }
       }
     ]
   }
